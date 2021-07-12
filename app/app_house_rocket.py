@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import folium
 import geopandas
+import plotly.express as px
 
 from streamlit_folium import folium_static
 from folium.plugins import MarkerCluster
@@ -10,13 +11,13 @@ from folium.plugins import MarkerCluster
 st.set_page_config(layout='wide')
 
 
-# @st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def get_data(path):
     data = pd.read_csv(path)
     return data
 
 
-# @st.cache(allow_output_mutation=True)
+@st.cache(allow_output_mutation=True)
 def get_geofile(url):
     geofile = geopandas.read_file(url)
     return geofile
@@ -36,12 +37,13 @@ data['price_m2'] = data['price'] / data['sqft_lot']
 ##
 # data overview
 # filtro atributos
-f_attributes = st.sidebar.multiselect('Enter collumns', data.columns)
+f_attributes = st.sidebar.multiselect('Enter columns', data.columns)
 
 # filtro zipcode
 f_zipcode = st.sidebar.multiselect('Enter zipcode', data['zipcode'].unique())
 
 st.title('Data Overview')
+
 if (f_zipcode != []) & (f_attributes != []):
     data = data.loc[data['zipcode'].isin(f_zipcode), f_attributes]
 
@@ -55,6 +57,7 @@ else:
     data = data.copy()
 
 st.dataframe(data)
+
 c1, c2 = st.beta_columns((1, 1))  # controla dimensão colunas
 
 # Average Metrics
@@ -94,7 +97,7 @@ c2.dataframe(df1, height=500)
 st.title('Region Overview')
 
 c1, c2 = st.beta_columns((1, 1))
-c1.header('Portifolio Density')
+c1.header('Portfolio Density')
 
 df = data.sample(100)
 
@@ -107,18 +110,18 @@ for name, row in df.iterrows():
     folium.Marker([row['lat'], row['long']],
                   popup='Sold R$ {0} on: {1}. Features {2} sqft, {3} bedrooms, {4} bathrooms,'
                         'year built: {5}'.format(row['price'], row['date'], row['sqft_living'],
-                                                 row['bedrooms'], row['bathrooms'], row['yr_built'])).add_to(
-        marker_cluster)
+                         row['bedrooms'], row['bathrooms'], row['yr_built'])).add_to(marker_cluster)
 
 with c1:
     folium_static(density_map)
 
-# Região Price Map
-c1.header('Price Density')
+# Region Price Map
+c2.header('Price Density')
 df = data[['price', 'zipcode']].groupby('zipcode').mean().reset_index()
 df.columns = ['ZIP', 'PRICE']
 
-df = df.sample(10)
+#df = df.sample(10)
+
 geofile = geofile[geofile['ZIP'].isin(df['ZIP'].tolist())]
 
 region_price_map = folium.Map(location=[data['lat'].mean(),
@@ -134,5 +137,35 @@ region_price_map.choropleth(data = df,
                             line_opacity=0.2,
                             legend_name='AVG PRICE')
 
-with c1:
+with c2:
     folium_static(region_price_map)
+
+################################################
+# distribuição dos imóveis por categorias comerciais
+st.sidebar.title('Commercial Options')
+st.title('Comercial Attrbitues')
+
+# Average price per year
+#filters
+min_year_built = int(data['yr_built'].min())
+max_year_built = int(data['yr_built'].max())
+default_year_built = int(data['yr_built'].mean())
+
+st.sidebar.subheader('Select Max year built')
+f_year_built = st.sidebar.slider('Year Built', min_year_built, max_year_built, default_year_built)
+
+st.header('Average price per year built')
+# data selection
+df = data.loc[data['yr_built'] < f_year_built]
+df = df[['yr_built', 'price']].groupby('yr_built').mean().reset_index()
+
+# plot
+fig = px.line(df, x='yr_built', y='price')
+st.plotly_chart(fig, use_container_width=True)
+
+# Average price per day
+data['date'] = pd.to_datetime(data['date'])
+df = data[['date', 'price']].groupby('date').mean().reset_index()
+
+fig = px.line( df, x='date', y='price')
+st.plotly_chart(fig, use_container_width=True)
