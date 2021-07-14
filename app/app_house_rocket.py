@@ -5,6 +5,7 @@ import folium
 import geopandas
 import plotly.express as px
 
+from datetime import datetime
 from streamlit_folium import folium_static
 from folium.plugins import MarkerCluster
 
@@ -146,13 +147,14 @@ st.sidebar.title('Commercial Options')
 st.title('Comercial Attrbitues')
 
 # Average price per year
+data['date'] = pd.to_datetime(data['date']).dt.strftime('%y-%m-%d')
+
 #filters
 min_year_built = int(data['yr_built'].min())
 max_year_built = int(data['yr_built'].max())
-default_year_built = int(data['yr_built'].mean())
 
 st.sidebar.subheader('Select Max year built')
-f_year_built = st.sidebar.slider('Year Built', min_year_built, max_year_built, default_year_built)
+f_year_built = st.sidebar.slider('Year Built', min_year_built, max_year_built, max_year_built)
 
 st.header('Average price per year built')
 # data selection
@@ -164,8 +166,100 @@ fig = px.line(df, x='yr_built', y='price')
 st.plotly_chart(fig, use_container_width=True)
 
 # Average price per day
+st.header('Average price per day')
+
+#filters
+min_date = datetime.strptime(data['date'].min(), '%y-%m-%d')
+max_date = datetime.strptime(data['date'].max(), '%y-%m-%d')
+st.sidebar.subheader('Select max Date')
+f_date = st.sidebar.slider('Date', min_date, max_date, max_date)
+
+
+data['date'] = pd.to_datetime(data['date']).dt.strftime('%y-%m-%d')
 data['date'] = pd.to_datetime(data['date'])
+
+df = data.loc[data['date'] < f_date]
 df = data[['date', 'price']].groupby('date').mean().reset_index()
 
-fig = px.line( df, x='date', y='price')
+# plot
+fig = px.line(df, x='date', y='price')
 st.plotly_chart(fig, use_container_width=True)
+
+#### histograma
+st.header('Price Distribuition')
+st.sidebar.subheader('Select Max Price')
+
+#filter
+min_price = int(data['price'].min())
+max_price = int(data['price'].max())
+avg_price = int(data['price'].mean())
+
+#data filtering
+f_price = st.sidebar.slider('price', min_price, max_price, avg_price)
+df = data.loc[data['price'] < f_price]
+
+# data plot
+fig = px.histogram(df, x='price', nbins=50)
+st.plotly_chart(fig, use_container_width=True)
+
+# Distribuição dos imoveis por categoria
+st.sidebar.title('Attributes Options')
+st.title('House Attributes')
+
+# filters
+f_bedrooms = st.sidebar.selectbox('Max number of bedrooms', sorted(set(data['bedrooms'].unique())))
+f_bathrooms = st.sidebar.selectbox('Max number of bathrooms', sorted(set(data['bathrooms'].unique())))
+
+c1, c2 = st.beta_columns(2)
+
+# house per bedrooms
+c1.header('Houses per Bedrooms')
+df = data[data['bedrooms'] < f_bedrooms]
+fig = px.histogram(df, x='bedrooms', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
+
+# house per bathrooms
+c2.header('Houses per bathrooms')
+df = data[data['bathrooms'] < f_bathrooms]
+fig = px.histogram(df, x='bathrooms', nbins=19)
+c2.plotly_chart(fig, use_container_width=True)
+
+
+#filter
+f_floors = st.sidebar.selectbox('Max number of floor', sorted(set(data['floors'].unique())))
+f_wahterview = st.sidebar.checkbox('Only Houses with water view')
+
+c1, c2 = st.beta_columns(2)
+
+# house per floors
+c1.header('Houses per floor')
+df = data[data['floors'] < f_floors]
+fig = px.histogram(df, x='floors', nbins=19)
+c1.plotly_chart(fig, use_container_width=True)
+
+# house per water view
+c2.header('Waterfront view')
+if f_wahterview:
+    df = data[data['waterfront'] == 1]
+else:
+    df = data.copy()
+
+fig = px.histogram(df, x='waterfront', nbins=10)
+c2.plotly_chart(fig, use_container_width=True)
+
+################################################ textt
+st.header('Average price per day')
+st.sidebar.subheader('Select max Date')
+
+data['date'] = pd.to_datetime(data['date']).dt.strftime('%y-%m-%d')
+today = datetime.strptime(data['date'].min(), '%y-%m-%d')
+tomorrow = datetime.strptime(data['date'].max(), '%y-%m-%d')
+start_date = st.sidebar.date_input('Start date', today)
+end_date = st.sidebar.date_input('End date', tomorrow)
+
+df = pd.DataFrame({"start date": start_date, "end date":end_date, "value":[11,3,11,4]})
+if start_date < end_date:
+    st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+else:
+    st.error('Error: End date must fall after start date.')
+
