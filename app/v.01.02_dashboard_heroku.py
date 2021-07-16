@@ -67,15 +67,15 @@ def overview_data(data):
 
     st.dataframe(df0)
 
-    #average metrics
+    # average metrics
     df1 = data[['id', 'zipcode']].groupby('zipcode').count().reset_index()
     df2 = data[['price', 'zipcode']].groupby('zipcode').mean().reset_index()
     df3 = data[['sqft_living', 'zipcode']].groupby('zipcode').mean().reset_index()
     df4 = data[['price_m2', 'zipcode']].groupby('zipcode').mean().reset_index()
 
-    c1, c2 = st.beta_columns((1,1))
+    c1, c2 = st.beta_columns((1, 1))
 
-    #merge
+    # merge
     m1 = pd.merge(df1, df2, on='zipcode', how='inner')
     m2 = pd.merge(m1, df3, on='zipcode', how='inner')
     df = pd.merge(m2, df4, on='zipcode', how='inner')
@@ -85,7 +85,7 @@ def overview_data(data):
     c1.header('Média de valores')
     c1.dataframe(df, width=500, height=300)
 
-    #statistic descriptive
+    # statistic descriptive
     num_attributes = data.select_dtypes(include=['int64', 'float64'])
     media = pd.DataFrame(num_attributes.apply(np.mean))
     mediana = pd.DataFrame(num_attributes.apply(np.median))
@@ -97,11 +97,10 @@ def overview_data(data):
     df1 = pd.concat([max_, min_, media, mediana, std], axis=1).reset_index()
     df1.columns = ['attirbutes', 'max', 'min', 'mean', 'median', 'std']
 
-    c1.header('Análise descritiva')
+    c2.header('Análise descritiva')
     c2.dataframe(df1, width=500, height=300)
 
     return None
-
 
 def portifolio_density(data, geofile):
     st.title('Visão Geral da Região')
@@ -109,11 +108,10 @@ def portifolio_density(data, geofile):
     c1, c2 = st.beta_columns((1, 1))
     c1.header('Densidade do Portifólio')
 
-    df = data.sample(100)
+    df = data #.sample(100)
 
     # Base MAP - Folium
-    density_map = folium.Map(location=[data['lat'].mean(), data['long'].mean()],
-                             default_zoom_start=15)
+    density_map = folium.Map(location=[data['lat'].mean(), data['long'].mean()], default_zoom_start=15)
 
     marker_cluster = MarkerCluster().add_to(density_map)
     for name, row in df.iterrows():
