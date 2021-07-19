@@ -1,7 +1,8 @@
 # House Rocket Project
 # Sobre a empresa
 House Rocket é uma empresa que tem como modelo de negócio a compra e venda de imóveis usando a tecnologia como meio de viabilizar isso. Sua estratéfia principal é a compra de casas por preços baixos em localizações comercialmente atrativas e depois revendê-las por preços mais altos. Quanto maior a diferença entre o valor de compra e o valor de venda, maior o lucro da empresa. 
-
+<br /> O cientista de dados é responsábel pelo desenvolvimento do painel on-line para que o CEO da empresa tenha a visão geral das propriedades disponíveis para aqusição.
+<br /> O dashbord deve conter quais as propriedades disponíveis para compra, mapa com localização, uma visão da tabela com filtros e atributos.
 # Sobre o dataset
 Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction).
 
@@ -30,6 +31,7 @@ Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kag
 # Questão de negócio
 
 # Premissas do negócio
+Os dados disponíveis são do perido de maio de 2014 a maio de 2015
 
 # Planejamento da solução
 Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction)
@@ -46,3 +48,6 @@ Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalespredictio
 # Insights do negócio
 
 # Resultados financeiros
+
+# Conclusão
+O objetivo deste projeto era criar um dashbord para o CEO da House Rocket. A implantação do painel nas plataforma Heroku proporcionou ao CEO acesso de qualquer lugar, facilitando a visualização de dados e tendo esse projeto como uma ferramenta estratégica na tomada de decisão.
