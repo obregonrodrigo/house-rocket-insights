@@ -31,7 +31,7 @@ Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kag
 # Questão de negócio
 
 # Premissas do negócio
-Os dados disponíveis são do perido de maio de 2014 a maio de 2015
+Os dados disponíveis são do periodo de maio de 2014 a maio de 2015
 
 # Planejamento da solução
 Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction)
