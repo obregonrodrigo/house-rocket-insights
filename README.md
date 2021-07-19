@@ -38,3 +38,13 @@ Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalespredictio
 <br />Responder problemas do negócio
 <br />Resultados para o negócio
 <br />Conclusão
+
+# Questão de negócio
+
+# Premissas do negócio
+
+# Planejamento da solução
+
+# Insights do negócio
+
+# Resultados financeiros
