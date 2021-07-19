@@ -27,7 +27,11 @@ Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kag
 <br />**squft_livng15:** tamanho médio das 15 casas mais próximas, em pés².
 <br />**sqft_lot15:** tamanho médio dos lotes das 15 casas mais próximas, em pés².
 
-# Estratégia e etapas
+# Questão de negócio
+
+# Premissas do negócio
+
+# Planejamento da solução
 Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction)
 <br /> Entendimento de negócio
 <br />Tratamento de dados
@@ -38,12 +42,6 @@ Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalespredictio
 <br />Responder problemas do negócio
 <br />Resultados para o negócio
 <br />Conclusão
-
-# Questão de negócio
-
-# Premissas do negócio
-
-# Planejamento da solução
 
 # Insights do negócio
 
