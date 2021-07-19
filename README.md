@@ -33,7 +33,7 @@ Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kag
 # Premissas do negócio
 Os dados disponíveis são do periodo de maio de 2014 a maio de 2015
 <br />
-<br />Definição das estações do ano:
+<br />**Definição das estações do ano:**
 <br />Primavera: inicio em 21 de março
 <br />Verão: inicio em 21 de junho
 <br />Outono: inicio em 23 de setembro
