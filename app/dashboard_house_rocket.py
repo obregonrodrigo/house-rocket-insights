@@ -24,27 +24,83 @@ def get_geofile(url):
 
     return geofile
 
+
+def date_season(date):
+    year = str(date.year)
+    seasons = {'spring': pd.date_range(start='21/03/' + year, end='20/06/' + year),
+               'summer': pd.date_range(start='21/06/' + year, end='22/09/' + year),
+               'fall': pd.date_range(start='23/09/' + year, end='20/12/' + year)}
+    if date in seasons['spring']:
+        return 'spring'
+    if date in seasons['summer']:
+        return 'summer'
+    if date in seasons['fall']:
+        return 'fall'
+    else:
+        return 'winter'
+
 def set_feature(data):
+    #preço por m2
     data['price_m2'] = data['price'] / data['sqft_lot']
-    # data['date'] = pd.to_datetime(data['date'], format='%Y-%m-%d')
+
+    # média de preço por zipcode
+    mz = data[['price', 'zipcode']].groupby('zipcode').median().reset_index().rename(columns={'price': 'median_price'})
+    data = pd.merge(data, mz, on='zipcode', how='left')
+
+    # decisão de compra
+    data['decision'] = data[['price', 'median_price', 'condition']].apply(
+        lambda x: 1 if ((x['price'] <= x['median_price']) & (x['condition'] >= 3)) else 0, axis=1)
+
+    # sugestão de preço de venda
+    data['selling_suggestion'] = data[['price', 'median_price', 'condition']].apply(lambda x: x['price'] * 1.25
+    if ((x['price'] <= x['median_price']) & (x['condition'] >= 3)) else 0, axis=1)
+
+    # retorno esperado
+    data['expected_profit'] = data[['price', 'selling_suggestion']].apply(lambda x: 0 if x['selling_suggestion'] == 0
+    else (x['selling_suggestion'] - x['price']), axis=1)
+
+    # melhor estação do ano para venda
+    data['season_sell'] = ''
+    for i in range(len(data)):
+        cols = ['med_fall', 'med_spring', 'med_summer', 'med_winter']
+        if data.loc[i, 'decision'] != 0:
+            if data.loc[i, cols[0]] >= data.loc[i, 'price']:
+                data.loc[i, 'season_sell'] = data.loc[i, 'season_sell'] + 'autumn '
+            if data.loc[i, cols[1]] >= data.loc[i, 'price']:
+                data.loc[i, 'season_sell'] = data.loc[i, 'season_sell'] + 'spring '
+            if data.loc[i, cols[2]] >= data.loc[i, 'price']:
+                data.loc[i, 'season_sell'] = data.loc[i, 'season_sell'] + 'summer '
+            if data.loc[i, cols[3]] >= data.loc[i, 'price']:
+                data.loc[i, 'season_sell'] = data.loc[i, 'season_sell'] + 'winter '
+
+    # exclui duplicados e imóveis que não sejam qualificados para compra
+    # data = data[data['decision'] != 0].copy()
+    data = data.sort_values('date', ascending=True)
+    data = data.drop_duplicates(subset='id', keep='last').copy()
+
     return data
 
 def data_transform(data):
-    data['level'] = 'NA'
-    for i in range(len(data)):
-        if data.loc[i, 'price'] < 321950:
-            data.loc[i, 'level'] = 1
-        elif (data.loc[i, 'price'] > 321950) & (data.loc[i, 'price'] <= 450000):
-            data.loc[i, 'level'] = 2
-        elif (data.loc[i, 'price'] > 450000) & (data.loc[i, 'price'] < 645000):
-            data.loc[i, 'level'] = 3
-        else:
-            data.loc[i, 'level'] = 4
 
-    data['condition_type'] = 'NA'
-    data.loc[data['condition'] <= 2, 'condition_type'] = 'bad'
-    data.loc[(data['condition'] > 2) & (data['condition'] < 5), 'condition_type'] = 'regular'
-    data.loc[data['condition'] >= 5, 'condition_type'] = 'good'
+    # criação da variável dormitory_type
+    data['dormitory_type'] = 'NA'
+    for i in range(len(data)):
+        if data.loc[i, 'bedrooms'] == 1:
+            data.loc[i, 'dormitory_type'] = 'studio'
+        if data.loc[i, 'bedrooms'] == 2:
+            data.loc[i, 'dormitory_type'] = 'apartment'
+        else:
+            data.loc[i, 'dormitory_type'] = 'house'
+
+    # estações do ano
+    data['season'] = data['date'].map(date_season)
+
+    # agrupamento por zipcode e média de preço por estação do ano
+    aux = data[['price', 'zipcode', 'season']].groupby(['zipcode', 'season']).median().reset_index()
+    aux1 = aux.pivot(index='zipcode', columns='season', values='price').reset_index()
+    aux1 = aux1.rename(
+        columns={'fall': 'med_fall', 'spring': 'med_spring', 'summer': 'med_summer', 'winter': 'med_winter'})
+    data = pd.merge(data, aux1, on='zipcode', how='left')
 
     return data
 
@@ -53,7 +109,7 @@ def overview_data(data):
     f_attributes = st.sidebar.multiselect('Selecione as colunas', data.columns)
     f_zipcode = st.sidebar.multiselect('Selecione os zipcodes', data['zipcode'].unique())
 
-    st.title('Data Overview')
+    st.title('Visão Geral')
     # select columns and lines
 
     if (f_zipcode != []) & (f_attributes != []):
@@ -103,12 +159,13 @@ def overview_data(data):
     return None
 
 def portifolio_density(data, geofile):
-    st.title('Visão Geral da Região')
+    st.title('Visão Geral da Região - Imóveis Qualificados para Compra')
 
     c1, c2 = st.beta_columns((1, 1))
     c1.header('Densidade do Portifólio')
 
-    df = data #.sample(100)
+    df = data[data['decision'] != 0].copy()
+    #df = data.sample(100)
 
     # Base MAP - Folium
     density_map = folium.Map(location=[data['lat'].mean(), data['long'].mean()], default_zoom_start=15)
@@ -164,9 +221,10 @@ def comercial_distribution(data):
     st.sidebar.subheader('Ano máximo de Construção')
     f_year_built = st.sidebar.slider('Ano de Contrução', min_year_built, max_year_built, max_year_built)
 
-    st.header('Preço médio por ano de contrução')
+    st.header('Preço médio por ano de contrução - Imóveis qualificados para compra')
 
     # data selection
+    df = data[data['decision'] != 0].copy()
     df = data.loc[data['yr_built'] < f_year_built]
     df = df[['yr_built', 'price']].groupby('yr_built').mean().reset_index()
 
@@ -183,11 +241,21 @@ def comercial_distribution(data):
     fig = px.histogram(df, x='level', y='price', nbins=7)
     c1.plotly_chart(fig, use_container_width=True)
 
-    # Average price per type
-    c2.header('Preço médio por condição estrutural')
-    df = data[['condition_type', 'price']].groupby('condition_type').mean().reset_index()
+    ## Average price per type
+    #c2.header('Preço médio por condição estrutural')
+    #df = data[['condition_type', 'price']].groupby('condition_type').mean().reset_index()
     # data plot
-    fig = px.histogram(df, x='condition_type', y='price', nbins=8)
+    ##fig = px.histogram(df, x='condition_type', y='price', nbins=8)
+    #c2.plotly_chart(fig, use_container_width=True)
+
+    # Média de valor de venda e lucro por tipo de imóvel
+    c2.header('Valor médio de venda e lucro')
+    df = data[['dormitory_type', 'selling_suggestion']].groupby('dormitory_type').mean().reset_index()
+    df1 = data[['dormitory_type', 'expected_profit']].groupby('expected_profit').mean().reset_index()
+    # data plot
+    width = 0.40
+    fig = px.histogram(df-0.2, x='dormitory_type', y='selling_suggestion', width, color='blue', nbins=8)
+    fig = px.histogram(df1+0.2, x='dormitory_type', y='expected_profit', width, color='green', nbins=8)
     c2.plotly_chart(fig, use_container_width=True)
 
     #### histograma
@@ -283,23 +351,12 @@ if __name__ == '__main__':
 
 st.markdown('---')
 
-st.title('Additional Information')
-
-st.header("Report Purpose:")
-
-st.write('House Rocket is a digital platform, its business model is to buy and sell real estate through technology.'
-         'Your main strategy is to buy good houses in great locations at low prices and then resell them later at higher'
-         'prices. The greater the difference between buying and selling, the greater the company profit and therefore'
-         'the greater its revenue.')
-
-st.write("The purpose of the report is to present a vision for senior management of real estate available for purchase"
-         "in King County, Seattle.")
-
+st.title('Informações adicionais')
 st.write('')
-st.markdown('This visualization data is part of the house rocket insights project. Developed by Rodrigo Obregon')
+st.markdown('Esses dashboard parte do projeto house rocket insights. Desenvolvido por Rodrigo Obregon')
 st.markdown('For more information about the business context and checking the code go to the project repository on '
             'github: [Github](https://github.com/obregonrodrigo/house-rocket-insights)')
-st.markdown('Other Projects: [Portfolio](https://github.com/obregonrodrigo)')
-st.markdown('Contact me: [LinkedIn](https://www.linkedin.com/in/rodrigobregon/)')
+st.markdown('Outros projetos: [Portfolio](https://github.com/obregonrodrigo)')
+st.markdown('Contato: [LinkedIn](https://www.linkedin.com/in/rodrigobregon/)')
 
 st.markdown('---')
