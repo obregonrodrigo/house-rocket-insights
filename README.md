@@ -46,9 +46,9 @@ Custo máximo de aquisição: US$ 4,142,197,223.00
 O projeto tem como objetivo auxiliar o CEO da House Rocket na estratégia de aqusição de imóveis disponíveis para compra. Para isso foi realizada a implatanção de um painel na plataforma Herocku que proporcionou ao CEO acesso de qualquer lugar, proporcionando uma melhor visão de dados e auxiliando na tomada de decisão do negócio.
 
 # Próximas etapas
-Tratamento de dados faltantes nos endereços.
-<br />Reavaliar o preço de aquisição com base no tempo em que a casa está disponível para venda.
-
+- Tratamento de dados faltantes nos endereços.
+<br />- Reavaliar o preço de aquisição com base no tempo em que a casa está disponível para venda.
+<br />- Explorar e tratar os dados do campo bathroom.
 <br />
 <br />
 <br /> Todas as informaçõea deste projeto são fictícias.
