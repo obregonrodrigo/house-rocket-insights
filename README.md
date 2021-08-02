@@ -37,7 +37,7 @@ Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalespredictio
 <br />Conclusão
 
 # Insights do negócio
-## Principais insights de dados
+Principais insights de dados
 <br />Imóveis qualificados para compra com vista para água representam menos de 1% do lucro esperado.
 <br />Aproximadamente 60% das propriedades ficaram disponíveis para compra na primavera ou no verão.
 <br />Imóveis reformados tem um valor 17,80% mais elevado que imóveis não reformados.
