@@ -38,7 +38,7 @@ Principais insights de dados
 <br />Imóveis com porão tem um valor 27,84% mais elevado que imóveis sem porão.
 
 # Resultados para o negócio
-Custo máximo de aquisição: US$ 4,142,197,223.00
+Custo máximo com aquisições: US$ 4,142,197,223.00
 <br />Valor máximo de retorno: US$ 5,177,746,528.75
 <br />Lucro máximo esperado: US$ 1,035,549,305.75
 
