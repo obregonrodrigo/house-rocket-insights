@@ -8,13 +8,6 @@ O modelo de negócios da House Rocket consiste na compra e revenda de imóveis p
 # Resultados de negócio
 Com base nos critérios utlizados, dos 21.436 imóveis disponíveis para compra na região, 10.707 estão qualificados para compra pela Hose Rocket. O valor máximo investido para a aquisição destes imóveis é de US$ 4.163.721.410,00, o retorno máximo resultante destas aquições é de US $ US$5,177,746,528.75, tendo um lucro máximo esperado de US$ 1,035,549,305.75. Representando uma margem de 25% de receita bruta.
 
-# Sobre o dataset
-Os dados utilizados neste projeto estão disponíveis no [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction).
-
-# Dashbord
-Confira o dashboard no [Heroku](https://analytics-house-rocket-21.herokuapp.com/)
-
-
 # Premissas do negócio
 Os dados disponíveis são do periodo de maio de 2014 a maio de 2015
 <br />
@@ -27,7 +20,7 @@ Os dados disponíveis são do periodo de maio de 2014 a maio de 2015
 # Planejamento da solução
 Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalesprediction)
 <br /> Entendimento de negócio
-<br />Tratamento de dados
+<br />Tratamento de [dados](https://github.com/obregonrodrigo/house-rocket-insights/tree/main/notebooks)
 <br /> - Tranformação de variaveis
 <br /> - Limpeza
 <br /> - Entendimento
