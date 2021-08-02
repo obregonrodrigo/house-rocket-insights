@@ -49,8 +49,7 @@ O projeto tem como objetivo auxiliar o CEO da House Rocket na estratégia de aqu
 - Tratamento de dados faltantes nos endereços.
 - Reavaliar o preço de aquisição com base no tempo em que a casa está disponível para venda.
 - Explorar e tratar os dados do campo bathroom.
-<br />- Reavaliar o preço de aquisição com base no tempo em que a casa está disponível para venda.
-<br />- Explorar e tratar os dados do campo bathroom.
+<br />
 <br />
 <br />
 <br /> Todas as informaçõea deste projeto são fictícias.
