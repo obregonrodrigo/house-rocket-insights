@@ -25,7 +25,7 @@ Coleta de dados via [Kagle](https://www.kaggle.com/harlfoxem/housesalespredictio
 <br /> - Limpeza
 <br /> - Entendimento
 <br />Exploração de dados | confira o dashboard [Versão 1 - Heroku](https://analytics-house-rocket-21.herokuapp.com/)
-<br />Exploração de dados | confira o dashboard [Versão 2 - Power BI](https://app.powerbi.com/view?r=eyJrIjoiYWQ0MDM3M2UtNjgxZi00ZWU0LWE4OWItMzY3NDRjNDA3MTgwIiwidCI6ImYwN2IwMzliLTUyODEtNDg5Zi1iNjQzLWE5ODU1OGIyNzYzNCJ9)
+<br />Exploração de dados | confira o dashboard [Versão 2 - Power BI](https://app.powerbi.com/view?r=eyJrIjoiYWQ0MDM3M2UtNjgxZi00ZWU0LWE4OWItMzY3NDRjNDA3MTgwIiwidCI6ImYwN2IwMzliLTUyODEtNDg5Zi1iNjQzLWE5ODU1OGIyNzYzNCJ9&pageName=ReportSection)
 <br />Responder problemas do negócio
 <br />Resultados para o negócio
 <br />Conclusão
