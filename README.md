@@ -51,9 +51,6 @@ O projeto tem como objetivo auxiliar o CEO da House Rocket na estratégia de aqu
 - Reavaliar o preço de aquisição com base no tempo em que a casa está disponível para venda.
 - Explorar e tratar os dados do campo bathroom.
 <br />
-<br />
-<br />
-<br /> Todas as informaçõea deste projeto são fictícias.
 
 
 
